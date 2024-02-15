@@ -7,8 +7,10 @@ import java.util.Arrays;
 public class MineField implements MouseListener {
     JFrame frame;
     Button [][] board=new Button[10][10];
+    int openButton;
 
     public MineField(){
+        openButton=0;
         frame = new JFrame("Mine Field");
         frame.setSize(800,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,12 +28,14 @@ public class MineField implements MouseListener {
         generateMine();
         updateCount();
         //print();
+        showMine();
 
 
 
         frame.setVisible(true);
 
     }
+
 
     public void generateMine(){
        int i=0;
@@ -53,11 +57,24 @@ public class MineField implements MouseListener {
                    board[row][col].setIcon( new ImageIcon("src/mine.png"));
                }else{
                    board[row][col].setText( board[row][col].getCount()+"");//string cevirdik
+                   board[row][col].setEnabled(false);
+
                }
             }
         }
 
     }
+
+    public void showMine(){
+        for(int row=0; row<board.length;row++){
+            for(int col=0; col<board[0].length;col++){
+                if(board[row][col].isMine()){
+                    board[row][col].setIcon( new ImageIcon("src/mine1.png"));
+                }
+            }
+        }
+    }
+
 
     public void updateCount(){
         for(int row=0; row<board.length;row++){
@@ -93,7 +110,9 @@ public class MineField implements MouseListener {
         }else if(board[r][c].getCount()!=0){
             board[r][c].setText(board[r][c].getCount()+"");
             board[r][c].setEnabled(false);
+            openButton++;
         }else{
+            openButton++;
             board[r][c].setEnabled(false);
             open(r-1,c);
             open(r+1,c);
@@ -112,7 +131,14 @@ public class MineField implements MouseListener {
            System.out.println("left click");
            if(button.isMine()){
                JOptionPane.showMessageDialog(frame,"You step on mine. Game over !!!");
+               print();
            }else{
+               open(button.getRow(), button.getCol());
+               if(openButton==(board.length*board[0].length)-10){
+                   JOptionPane.showMessageDialog(frame," You won !!");
+
+               }
+
 
 
            }
@@ -120,7 +146,7 @@ public class MineField implements MouseListener {
        }else if(e.getButton()==3){
            System.out.println("right click");
            if(!button.isFlag() ){
-               button.setIcon(new ImageIcon("src/flag.png"));
+               button.setIcon(new ImageIcon("src/flag1.png"));
                button.setFlag(true);
            }else{
                button.setIcon(null);
